@@ -1,7 +1,7 @@
-FROM node:10.17.0 AS build-env
-ADD . /app
-WORKDIR /app
+FROM node:alpine
 
+# Create app directory
+WORKDIR /usr/src/app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -9,10 +9,11 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-FROM gcr.io/distroless/nodejs
-COPY --from=build-env /app /app
-WORKDIR /app
+# Bundle app source
+COPY . .
 
 EXPOSE 5000:8090
 CMD [ "node", "index.js" ]
